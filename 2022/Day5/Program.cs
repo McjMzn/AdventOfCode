@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 
-namespace AdventOfCode.TwentyTwentyTwo.Day4;
+namespace AdventOfCode.TwentyTwentyTwo.Day5;
 
 
 internal class Program
