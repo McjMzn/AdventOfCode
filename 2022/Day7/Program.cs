@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode.TwentyTwentyTwo.Day7;
+
 internal abstract class FileSystemMember
 {
     public string Name { get; init; }
@@ -46,7 +47,7 @@ internal class Directory : FileSystemMember
         return this.Children.Select(c => c.Size).Sum();
     }
 
-    public IEnumerable<FileSystemMember> GetMembers(FileSystemMember parent)
+    public IEnumerable<FileSystemMember> GetChildren(FileSystemMember parent)
     {
         if (parent is not Directory directory)
         {
@@ -56,7 +57,7 @@ internal class Directory : FileSystemMember
         foreach (var child in directory.Children)
         {
             yield return child;
-            foreach (var grandchild in this.GetMembers(child))
+            foreach (var grandchild in this.GetChildren(child))
             {
                 yield return grandchild;
             }
@@ -71,7 +72,7 @@ internal class FileSystem
 
     public IEnumerable<FileSystemMember> GetAllMembers()
     {
-        return this.Root.GetMembers(this.Root);
+        return this.Root.GetChildren(this.Root);
     }
 
     public void ParseLog(string line)
