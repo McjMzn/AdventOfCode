@@ -1,43 +1,43 @@
-﻿
+﻿namespace AdventOfCode.TwentyTwentyTwo.Day11;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Numerics;
 using System.Text.RegularExpressions;
-
-namespace AdventOfCode.TwentyTwentyTwo.Day11;
 
 internal class Monkey
 {
-    public event Action<(Item Item, int Monkey)> ItemThrown;
-
     public int Id { get; set; }
     public List<Item> Items { get; set; }
-    public Func<BigInteger, BigInteger> Operation { get; set; }
-    public Predicate<BigInteger> Test { get; set; }
+
+    public Func<ulong, ulong> Operation { get; set; }
+    
+    public ulong Divider { get; set; }
     public int TestFailedThrowDirection { get; set; }
     public int TestSucceededThrowDirection { get; set; }
-
-    public int InspectionCounter { get; private set; } = 0;
+    
+    public ulong InspectionCounter { get; set; } = 0;
+    
+    public event Action<(Item Item, int Monkey)> ItemThrown;
 
     public void InspectAllItems()
     {
         var itemsToProcess = this.Items.ToList();
 
-        foreach(var item in itemsToProcess)
+        checked
         {
-            this.InspectionCounter++;
-            item.WorryLevel = this.Operation(item.WorryLevel);
-            
-            // Part 1
-            // item.WorryLevel = item.WorryLevel / 3;
-            
-            // Part 2
-            item.WorryLevel = item.WorryLevel;
+            foreach (var item in itemsToProcess)
+            {
+                this.InspectionCounter++;
+                item.WorryLevel = this.Operation(item.WorryLevel);
+                item.WorryLevel = MonkeyMath.PostProcess(item.WorryLevel);
 
-            var throwTarget = this.Test(item.WorryLevel) ? this.TestSucceededThrowDirection : this.TestFailedThrowDirection;
-            this.Items.Remove(item);
-            this.ItemThrown?.Invoke((item, throwTarget));
+                var testResult = item.WorryLevel % this.Divider == 0;
+                var throwTarget = testResult ? this.TestSucceededThrowDirection : this.TestFailedThrowDirection;
+
+                this.Items.Remove(item);
+                this.ItemThrown?.Invoke((item, throwTarget));
+            }
         }
     }
 }
@@ -49,7 +49,7 @@ internal class Item
         this.WorryLevel = worryLevel;
     }
 
-    public BigInteger WorryLevel { get; set; }
+    public ulong WorryLevel { get; set; }
 
     public override string ToString()
     {
@@ -57,27 +57,63 @@ internal class Item
     }
 }
 
+internal class MonkeyMath
+{
+    public static ulong ReliefFactor { get; set; } = 3;
+    public static ulong SanityFactor { get; set; } = ulong.MaxValue;
+
+    public static ulong Calculate(ulong input, string operation, string operand)
+    {
+        checked
+        {
+            ulong parsedOperand = operand == "old" ? input : ulong.Parse(operand);
+            return operation switch
+            {
+                "+" => input + parsedOperand,
+                "-" => input - parsedOperand,
+                "*" => input * parsedOperand,
+                _ => throw new NotImplementedException()
+            };
+        }
+    }
+
+    public static ulong PostProcess(ulong value)
+    {
+        value = value % MonkeyMath.SanityFactor;
+        value = value / MonkeyMath.ReliefFactor;
+
+        return value;
+    }
+}
+
 internal static class Program
 {
     public static void Main(string[] args)
     {
-        const int numberOfRounds = 10000;
-        var monkeys = Load();
+        // Part 1
+        Console.WriteLine($"Part 1: {Run(3, 20)}");
 
-        for(var i = 0; i < numberOfRounds; i++)
+        // Part 2
+        Console.WriteLine($"Part 2: {Run(1, 10000)}");
+    }
+
+    private static ulong Run(ulong reliefFactor, int numberOfRounds, string inputFile = "input.txt")
+    {
+        MonkeyMath.ReliefFactor = reliefFactor;
+        var monkeys = Load(inputFile);
+
+        for (var i = 0; i < numberOfRounds; i++)
         {
-            foreach(var monkey in monkeys)
+            foreach (var monkey in monkeys)
             {
                 monkey.InspectAllItems();
             }
         }
 
-        // Part 1
-        var monkeyBusiness = monkeys.Select(m => m.InspectionCounter).OrderByDescending(x => x).Take(2).Aggregate((a, b) => a * b);
-        Console.WriteLine($"Part 1: {monkeyBusiness}");
+        return monkeys.Select(m => m.InspectionCounter).OrderByDescending(x => x).Take(2).Aggregate((a, b) => a * b);
     }
 
-    private static List<Monkey> Load()
+    private static List<Monkey> Load(string inputFile)
     {
         var monkeys = new List<Monkey>();
         Action<(Item Item, int Monkey)> onThrow = t =>
@@ -86,6 +122,7 @@ internal static class Program
             monkey.Items.Add(t.Item);
         };
 
+        MonkeyMath.SanityFactor = 1;
         Input.Process(line =>
         {
             var newMonkeyMatch = Regex.Match(line, @"Monkey (?<id>\d+):");
@@ -108,41 +145,19 @@ internal static class Program
                 return;
             }
 
-            var operationMatch = Regex.Match(line, @"new = old (?<operation>.) (?<value>.*)");
+            var operationMatch = Regex.Match(line, @"new = old (?<operation>.) (?<operand>.*)");
             if (operationMatch.Success)
             {
-                if (operationMatch.Groups["value"].Value == "old")
-                {
-                    monkey.Operation = operationMatch.Groups["operation"].Value switch
-                    {
-                        "+" => n => n + n,
-                        "-" => n => n - n,
-                        "*" => n => n * n,
-                        "/" => n => n / n,
-                        _ => throw new NotImplementedException()
-                    };
-
-                    return;
-                }
-
-                var value = ulong.Parse(operationMatch.Groups["value"].Value);
-                monkey.Operation = operationMatch.Groups["operation"].Value switch
-                {
-                    "+" => n => n + value,
-                    "-" => n => n - value,
-                    "*" => n => n * value,
-                    "/" => n => n / value,
-                    _ => throw new NotImplementedException()
-                };
-
+                monkey.Operation = n => MonkeyMath.Calculate(n, operationMatch.Groups["operation"].Value, operationMatch.Groups["operand"].Value);
                 return;
             }
 
-            var testMatch = Regex.Match(line, @"Test: divisible by (?<value>\d+)");
+            var testMatch = Regex.Match(line, @"Test: divisible by (?<divider>\d+)");
             if (testMatch.Success)
             {
-                var value = ulong.Parse(testMatch.Groups["value"].Value);
-                monkey.Test = n => n % value == 0;
+                var divider = ulong.Parse(testMatch.Groups["divider"].Value);
+                monkey.Divider = divider;
+                MonkeyMath.SanityFactor *= divider;
                 return;
             }
 
@@ -159,7 +174,7 @@ internal static class Program
                     monkey.TestFailedThrowDirection = id;
                 }
             }
-        });
+        }, inputFile);
 
         return monkeys;
     }
