@@ -1,4 +1,7 @@
-﻿using AdventOfCode;
+﻿namespace AdventOfCode.TwentyTwentyTwo.Day12;
+
+using AdventOfCode;
+using AdventOfCode.Grids;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,28 +36,27 @@ public class Terrain
 
 internal class Program
 {
-    private static Grid<Terrain> LoadMap(string input)
+    private static ListGrid<Terrain> LoadMap(string input)
     {
-        var map = new Grid<Terrain>();
+        var map = new ListGrid<Terrain>();
         var lines = input.Split(Environment.NewLine);
         map.Height = lines.Count();
         map.Width = lines[0].Count();
 
-        map.Nodes = lines.ToList().SelectMany(x => x).Select(c => new Terrain(c)).ToList();
-
+        lines.SelectMany(x => x).Select(c => new Terrain(c)).ToList().ForEach(n => map.Add(n));
         map.Nodes.Single(n => n.IsStart).TravelCost = 0;
 
         return map;
     }
 
-    private static int FindShortestPath(Grid<Terrain> map)
+    private static int FindShortestPath(ListGrid<Terrain> map)
     {
         var neighbours =
             map
             .Nodes
             .ToDictionary(
                 node => node,
-                node => map.GetNeighbours(node)
+                node => map.GetDirectNeighbours(node)
             );
 
         var endNode = map.Nodes.Single(n => n.IsEnd);

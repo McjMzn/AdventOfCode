@@ -14,6 +14,8 @@ namespace AdventOfCode
             }
         }
 
+        public static void ProcessDemo(Action<string> onLineRead) => Process(onLineRead, "demo_input.txt");
+
         public static string Load(string filePath = "input.txt")
         {
             return File.ReadAllText(filePath);
