@@ -1,4 +1,6 @@
-﻿using AdventOfCode;
+﻿namespace AdventOfCode.TwentyTwentyTwo.Day12;
+
+using AdventOfCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
