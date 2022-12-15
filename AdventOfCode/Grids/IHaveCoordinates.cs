@@ -8,7 +8,6 @@ namespace AdventOfCode.Grids
 {
     public interface IHaveCoordinates
     {
-        int X { get; set; }
-        int Y { get; set; }
+        Coordinates Coordinates { get; set; }
     }
 }

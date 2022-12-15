@@ -38,14 +38,14 @@ namespace AdventOfCode.Grids
 
             if (a is IHaveCoordinates aWithCoordinates)
             {
-                aWithCoordinates.X = bX;
-                aWithCoordinates.Y = bY;
+                aWithCoordinates.Coordinates.X = bX;
+                aWithCoordinates.Coordinates.Y = bY;
             }
 
             if (b is IHaveCoordinates bWithCoordinates)
             {
-                bWithCoordinates.X = aX;
-                bWithCoordinates.Y = aY;
+                bWithCoordinates.Coordinates.X = aX;
+                bWithCoordinates.Coordinates.Y = aY;
             }
         }
 
@@ -61,8 +61,8 @@ namespace AdventOfCode.Grids
             this.NodesArray[y, x] = node;
             if (node is IHaveCoordinates nodeWithCoordinates)
             {
-                nodeWithCoordinates.Y = y;
-                nodeWithCoordinates.X = x;
+                nodeWithCoordinates.Coordinates.Y = y;
+                nodeWithCoordinates.Coordinates.X = x;
             }
         }
 
