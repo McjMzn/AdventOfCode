@@ -13,7 +13,7 @@ namespace AdventOfCode.Grids
 
         public override IEnumerable<T> Nodes => this.nodes;
 
-        public override void Add(T node)
+        public void Add(T node)
         {
             this.nodes.Add(node);
         }

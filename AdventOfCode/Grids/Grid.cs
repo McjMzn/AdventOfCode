@@ -7,8 +7,6 @@ namespace AdventOfCode.Grids
     {
         public abstract IEnumerable<T> Nodes { get; }
 
-        public abstract void Add(T node);
-
         public abstract T Get(int y, int x);
         
         public abstract void Set(int y, int x, T node);

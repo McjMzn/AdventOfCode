@@ -17,7 +17,7 @@ namespace AdventOfCode.Grids
             this.NumberOfColumns = columns;
         }
 
-        public void Initialize(Func<int, int, T> objectFactory)
+        public void Fill(Func<int, int, T> objectFactory)
         {
             for(var y = 0; y < this.NumberOfRows; y++)
             {
@@ -50,11 +50,6 @@ namespace AdventOfCode.Grids
         }
 
         public override IEnumerable<T> Nodes { get { foreach (var item in this.NodesArray) yield return item; } }
-
-        public override void Add(T node)
-        {
-            throw new NotImplementedException();
-        }
 
         public override void Set(int y, int x, T node)
         {
