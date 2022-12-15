@@ -1,5 +1,6 @@
 ﻿using AdventOfCode;
 using AdventOfCode.Grids;
+using System.Diagnostics;
 using System.Text;
 
 internal enum MaterialType
@@ -8,7 +9,8 @@ internal enum MaterialType
     Rock,
     Sand,
     Void,
-    Spawner
+    Spawner,
+    ThickAir
 }
 
 internal class Material : IHaveCoordinates
@@ -35,6 +37,7 @@ internal class Material : IHaveCoordinates
             MaterialType.Sand => "o",
             MaterialType.Void => "~",
             MaterialType.Spawner => "+",
+            MaterialType.ThickAir => "@",
         };
     }
 }
@@ -105,6 +108,20 @@ internal class Program
                     {
                         objects.Add(new Material(MaterialType.Rock) { Coordinates = new(y, x) });
                     }
+
+                    var length = Math.Abs(to.X - from.X) + 1;
+                    if (length >= 3)
+                    {
+                        for (var subLevel = 1; subLevel <= length - 2; subLevel++)
+                        {
+                            var subFrom = Math.Min(from.X, to.X) + subLevel;
+                            var subCount = length - (subLevel * 2);
+                            for (var subX = 0; subX < subCount; subX++)
+                            {
+                                objects.Add(new Material(MaterialType.ThickAir) { Coordinates = new(from.Y + subLevel, subFrom + subX) });
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -123,26 +140,47 @@ internal class Program
     private static void Main(string[] args)
     {
         // Load input data
-        var objects = LoadObjects("demo_input.txt");
+        var objects = LoadObjects("input.txt");
 
         // Set cave bounds
-        var minX = objects.Select(o => o.Coordinates.X).Min();
-        var maxX = objects.Select(o => o.Coordinates.X).Max();
-        var maxY = objects.Select(o => o.Coordinates.Y).Max();
+        var minX = objects.Where(o => !o.Is(MaterialType.ThickAir)).Select(o => o.Coordinates.X).Min();
+        var maxX = objects.Where(o => !o.Is(MaterialType.ThickAir)).Select(o => o.Coordinates.X).Max();
+        var maxY = objects.Where(o => !o.Is(MaterialType.ThickAir)).Select(o => o.Coordinates.Y).Max();
 
-        // Initialize the Cave
         var requiredWidth = maxX - minX + 1;
         var requiredHeight = maxY + 1;
+
         var additionalRows = 1;
         var additionalColumns = 2;
 
-        var cave = new ArrayGrid<Material>(requiredHeight + additionalRows, requiredWidth + additionalColumns);
+        var missingFromLeft = 0;
+        var missingFromRight = 0;
+
+        /* Part 2 */
+        additionalRows += 1;
+        var pileWidth = 0;
+        var levelWidth = 1;
+        for (var i = 0; i < maxY + 2; i++)
+        {
+            pileWidth += levelWidth;
+            levelWidth += 2;
+        }
+
+        var pileWidthHalf = pileWidth / 2 + 1;
+        missingFromRight = pileWidthHalf - (maxX - 500);
+        missingFromLeft = pileWidthHalf - (500 - minX);
+        /* End of Part 2 */
+
+        // Initialize the Cave
+
+
+        var cave = new ArrayGrid<Material>(requiredHeight + additionalRows, requiredWidth + additionalColumns + missingFromLeft + missingFromRight);
         
         //  Fill it with air
         cave.Initialize((y, x) => new Material(MaterialType.Air) { Coordinates = new(y, x) });
 
         // Offset the rocks
-        var xOffset = -minX + additionalColumns / 2;
+        var xOffset = -minX + additionalColumns / 2 + missingFromLeft;
         var yOffset = 0;
 
         objects.ForEach(o =>
@@ -152,16 +190,76 @@ internal class Program
         });
 
         // Place the rocks
-        objects.ForEach(o => cave.Set(o.Coordinates.Y, o.Coordinates.X, o));
+        objects.Where(o => !o.Is(MaterialType.ThickAir)).ToList().ForEach(o => cave.Set(o.Coordinates.Y, o.Coordinates.X, o));
+        //objects.Where(o => o.Is(MaterialType.ThickAir)).ToList().ForEach(o =>
+        //{
+        //    if (o.Coordinates.Y > maxY + 2)
+        //    {
+        //        return;
+        //    }
+
+        //    var material = cave.Get(o.Coordinates.Y, o.Coordinates.X);
+        //    if (material.Is(MaterialType.Air))
+        //    {
+        //        cave.Set(o.Coordinates.Y, o.Coordinates.X, o);
+        //    }
+        //});
+
+
+        
 
         // Create the void
-        cave.Nodes.Where(n => n.Coordinates.Y >= maxY && n.Type == MaterialType.Air).ToList().ForEach(n => cave.Set(n.Coordinates.Y, n.Coordinates.X, new Material(MaterialType.Void)));
+        //cave.Nodes.Where(n => n.Coordinates.Y >= maxY && n.Type == MaterialType.Air).ToList().ForEach(n => cave.Set(n.Coordinates.Y, n.Coordinates.X, new Material(MaterialType.Void)));
 
+        // Create the infinite bedrock
+        cave.Nodes.Where(n => n.Coordinates.Y == maxY + 2).ToList().ForEach(n => n.Type = MaterialType.Rock);
+
+
+
+
+        var counter = 0;
+        var startingX = 500 + xOffset;
+        var rows = maxY + 2;
+        var rowCount = 1;
+        for (var yPos = 0; yPos < rows; yPos++)
+        {
+            for (var xPos = startingX; xPos < startingX + rowCount; xPos++)
+            {
+                if (yPos == 0)
+                {
+                    cave.Set(yPos, xPos, new Material(MaterialType.Sand));
+                    counter++;
+                    continue;
+                }
+
+                if (
+                    (cave.Get(yPos - 1, xPos - 1).Is(MaterialType.Rock) || cave.Get(yPos - 1, xPos - 1).Is(MaterialType.Air)) &&
+                    (cave.Get(yPos - 1, xPos).Is(MaterialType.Rock) || cave.Get(yPos - 1, xPos).Is(MaterialType.Air)) &&
+                    (cave.Get(yPos - 1, xPos + 1).Is(MaterialType.Rock) || cave.Get(yPos - 1, xPos + 1).Is(MaterialType.Air))
+                )
+                {
+                    continue;
+                }
+             
+                if (cave.Get(yPos, xPos).Is(MaterialType.Rock))
+                {
+                    continue;
+                }
+
+                cave.Set(yPos, xPos, new Material(MaterialType.Sand));
+                counter++;
+            }
+
+            startingX -= 1;
+            rowCount += 2;
+        }
+
+        var c = cave.Nodes.Count(c => c.Is(MaterialType.Spawner)); 
         // Spawner
         var spawner = new Coordinates(0, 500 + xOffset);
 
-        Console.WriteLine(cave);
-
+        // Console.WriteLine(cave);
+        var stopwatch = Stopwatch.StartNew();
         var sandLost = false;
         Sand.FellIntoTheVoid += () => sandLost = true;
         var path = new Coordinates[] { null, null, null, null };
@@ -169,20 +267,29 @@ internal class Program
         while (!sandLost)
         {
             var spawnPointMaterial = cave.Get(spawner.Y, spawner.X);
-
-            if (path[1] is not null)
+            if (spawnPointMaterial.Is(MaterialType.Sand))
             {
-                cave.Set(path[1].Y, path[1].X, new Sand());
-                path = new[] { null, null, null, path[1] };
+                // part 2 result
+                var res = cave.Nodes.OfType<Sand>().Count(s => s.IsStable);
+                stopwatch.Stop();
+                Console.WriteLine($"Measured {res} sand drops in {stopwatch.ElapsedMilliseconds} ms.");
+                var xx = 3;
+            }
+
+            var sand = new Sand();
+            if (path[2] is not null)
+            {
+                cave.Set(path[2].Y, path[2].X, sand);
+                path = new[] { null, null, null, path[2] };
             }
             else
             {
-                cave.Set(spawner.Y, spawner.X, new Sand());
+                cave.Set(spawner.Y, spawner.X, sand);
             }
 
-            Console.WriteLine($"{Environment.NewLine}{cave}");
+            // Console.WriteLine($"{Environment.NewLine}{cave}");
 
-            var sand = cave.Nodes.OfType<Sand>().Single(s => !s.IsStable);
+            // var sand = cave.Nodes.OfType<Sand>().Single(s => !s.IsStable);
             while (!sand.IsStable && !sandLost)
             {
                 sand.Update(cave);
@@ -194,11 +301,13 @@ internal class Program
                     path[3] = sand.Coordinates;
                 }
 
-                Console.WriteLine($"{Environment.NewLine}{cave}");
+                // Console.WriteLine($"{Environment.NewLine}{cave}");
             }
+
+            var tempRes = cave.Nodes.OfType<Sand>().Count(s => s.IsStable);
         }
 
-        Console.WriteLine($"Part 1: {cave.Nodes.OfType<Sand>().Count(s => s.IsStable)}"); // 24 for demo
+        // Console.WriteLine($"Part 1: {cave.Nodes.OfType<Sand>().Count(s => s.IsStable)}"); // 24 for demo
         var x = 3;
     }
 }
