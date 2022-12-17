@@ -17,5 +17,10 @@ namespace AdventOfCode.Grids
         }
 
         public int Y { get; set; }
+
+        public override string ToString()
+        {
+            return $"({this.Y}, {this.X})";
+        }
     }
 }
