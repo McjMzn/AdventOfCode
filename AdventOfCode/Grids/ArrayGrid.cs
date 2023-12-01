@@ -19,9 +19,9 @@ namespace AdventOfCode.Grids
 
         public void Fill(Func<int, int, T> objectFactory)
         {
-            for(var y = 0; y < this.NumberOfRows; y++)
+            for (var y = 0; y < this.NumberOfRows; y++)
             {
-                for(var x = 0; x < this.NumberOfColumns; x++)
+                for (var x = 0; x < this.NumberOfColumns; x++)
                 {
                     this.NodesArray[y, x] = objectFactory(y, x);
                 }
@@ -49,9 +49,24 @@ namespace AdventOfCode.Grids
             }
         }
 
-        public override IEnumerable<T> Nodes { get { foreach (var item in this.NodesArray) yield return item; } }
+        public override List<T> Nodes
+        {
+            get
+            {
+                var nodes = new List<T>();
+                for (var y = 0; y < this.NodesArray.GetLength(0); y++)
+                {
+                    for (var x = 0; x < this.NodesArray.GetLength(1); x++)
+                    {
+                        nodes.Add(this.NodesArray[y, x]);
+                    }
+                }
 
-        public override void Set(int y, int x, T node)
+                return nodes;
+            }
+        }
+
+        public override T Set(int y, int x, T node)
         {
             this.NodesArray[y, x] = node;
             if (node is IHaveCoordinates nodeWithCoordinates)
@@ -59,14 +74,21 @@ namespace AdventOfCode.Grids
                 nodeWithCoordinates.Coordinates.Y = y;
                 nodeWithCoordinates.Coordinates.X = x;
             }
+
+            return node;
         }
 
         public override T Get(int y, int x)
         {
+            if (y < 0 || x < 0 || y > this.NumberOfRows - 1 || x > this.NumberOfColumns - 1)
+            {
+                return null;
+            }
+
             return this.NodesArray[y, x];
         }
 
-        protected override (int Y, int X) GetIndices(T node)
+        public override (int Y, int X) GetIndices(T node)
         {
             for (var y = 0; y < this.NodesArray.GetLength(0); y++)
             {

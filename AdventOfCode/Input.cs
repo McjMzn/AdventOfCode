@@ -20,5 +20,10 @@ namespace AdventOfCode
         {
             return File.ReadAllText(filePath);
         }
+
+        public static string LoadDemo(string filePath = "demo_input.txt")
+        {
+            return File.ReadAllText(filePath);
+        }
     }
 }

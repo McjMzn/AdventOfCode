@@ -28,7 +28,7 @@ namespace AdventOfCode.Grids
             return this.nodes[y * Width + x];
         }
 
-        protected override (int Y, int X) GetIndices(T node)
+        public override (int Y, int X) GetIndices(T node)
         {
             var index = this.nodes.IndexOf(node);
 
@@ -53,7 +53,7 @@ namespace AdventOfCode.Grids
             return builder.ToString();
         }
 
-        public override void Set(int y, int x, T node)
+        public override T Set(int y, int x, T node)
         {
             throw new NotImplementedException();
         }

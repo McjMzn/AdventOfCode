@@ -9,7 +9,7 @@ namespace AdventOfCode.Grids
 
         public abstract T Get(int y, int x);
         
-        public abstract void Set(int y, int x, T node);
+        public abstract T Set(int y, int x, T node);
 
         public T GetLeftFrom(T node)
         {
@@ -63,6 +63,6 @@ namespace AdventOfCode.Grids
                 .ToList();
         }
 
-        protected abstract (int Y, int X) GetIndices(T node);
+        public abstract (int Y, int X) GetIndices(T node);
     }
 }
