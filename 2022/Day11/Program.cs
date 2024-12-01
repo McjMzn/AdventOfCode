@@ -174,7 +174,7 @@ internal static class Program
                     monkey.TestFailedThrowDirection = id;
                 }
             }
-        }, inputFile);
+        });
 
         return monkeys;
     }

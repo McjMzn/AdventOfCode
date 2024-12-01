@@ -88,12 +88,14 @@ internal class Program
     private static void Main(string[] args)
     {
         // Demo
-        var demoInput = Input.Load("demo_input.txt");
+        Input.UseDemo();
+        var demoInput = Input.Load();
         var demoMap = LoadMap(demoInput);
         var demoResult = FindShortestPath(demoMap);
         Console.WriteLine($"Demo: {demoResult} (should be 31).");
 
         // Part 1
+        Input.UseDefault();
         var part1Input = Input.Load();
         var part1Map = LoadMap(part1Input);
         var part1Result = FindShortestPath(part1Map);

@@ -113,7 +113,7 @@ internal class Program
                     }
                 }
             }
-        }, inputFilePath);
+        });
 
         return objects;
     }

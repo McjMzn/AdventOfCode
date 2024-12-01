@@ -1,29 +1,49 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace AdventOfCode
 {
     public class Input
     {
-        public static void Process(Action<string> onLineRead, string filePath = "input.txt")
+        public static string FilePath { get; set; } = "input.txt";
+
+        public static void UseDemo() => FilePath = "demo_input.txt";
+
+        public static void UseDefault() => FilePath = "input.txt";
+
+        public static void Process(Action<string> onLineRead)
         {
-            var lines = File.ReadAllLines(filePath);
+            var lines = File.ReadAllLines(FilePath);
             foreach(var line in lines)
             {
                 onLineRead(line);
             }
         }
 
-        public static void ProcessDemo(Action<string> onLineRead) => Process(onLineRead, "demo_input.txt");
-
-        public static string Load(string filePath = "input.txt")
+        public static string Load()
         {
-            return File.ReadAllText(filePath);
+            return File.ReadAllText(FilePath);
         }
 
-        public static string LoadDemo(string filePath = "demo_input.txt")
+        public static List<string> LoadLines()
         {
-            return File.ReadAllText(filePath);
+            return File.ReadLines(FilePath).ToList();
+        }
+
+        public static(int Height, int Width) GetSize()
+        {
+            var height = 0;
+            var width = 0;
+            Process(line =>
+            {
+                height++;
+                width = Math.Max(width, line.Length);
+            });
+
+            return (height, width);
         }
     }
 }

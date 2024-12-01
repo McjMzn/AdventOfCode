@@ -47,10 +47,20 @@ namespace AdventOfCode.Grids
             return Get(y - 1, x);
         }
 
-        public List<T> GetDirectNeighbours(T node)
+        public T GetUpperLeft(T node)
         {
             (var y, var x) = GetIndices(node);
+            return Get(y - 1, x - 1);
+        }
 
+        public T GetUpperRight(T node)
+        {
+            (var y, var x) = GetIndices(node);
+            return Get(y - 1, x + 1);
+        }
+
+        public List<T> GetDirectNeighbours(T node)
+        {
             return
                 new List<T>
                 {
@@ -58,6 +68,25 @@ namespace AdventOfCode.Grids
                     GetRightFrom(node),
                     GetUpFrom(node),
                     GetDownFrom(node),
+                }
+                .Where(n => n is not null)
+                .ToList();
+        }
+
+        public List<T> GetAllNeighbours(T node)
+        {
+            return
+                new List<T>
+                {
+                    GetLeftFrom(node),
+                    GetRightFrom(node),
+                    GetUpFrom(node),
+                    GetDownFrom(node),
+
+                    GetUpperLeft(node),
+                    GetUpperRight(node),
+                    GetLowerLeft(node),
+                    GetLowerRight(node),
                 }
                 .Where(n => n is not null)
                 .ToList();

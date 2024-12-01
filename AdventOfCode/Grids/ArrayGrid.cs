@@ -6,6 +6,8 @@ namespace AdventOfCode.Grids
 {
     public class ArrayGrid<T> : Grid<T> where T : class
     {
+        private int elementsAdded = 0;
+
         private T[,] NodesArray;
         public int NumberOfRows { get; }
         public int NumberOfColumns { get; }
@@ -15,6 +17,18 @@ namespace AdventOfCode.Grids
             this.NodesArray = new T[rows, columns];
             this.NumberOfRows = rows;
             this.NumberOfColumns = columns;
+        }
+
+        public void AddNext(T node)
+        {
+            var columns = this.NodesArray.GetLength(1);
+
+            var column = elementsAdded % columns;
+            var row = elementsAdded / columns;
+
+            this.NodesArray[row, column] = node;
+
+            elementsAdded++;
         }
 
         public void Fill(Func<int, int, T> objectFactory)
