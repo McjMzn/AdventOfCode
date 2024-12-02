@@ -2,7 +2,7 @@
 
 namespace Day2
 {
-    internal class Program
+    internal class Day2_2024 : IDailyChallenge
     {
         static bool IsSafe(List<int> levels)
         {
@@ -34,34 +34,47 @@ namespace Day2
             return true;
         }
 
-        static void Main(string[] args)
+        public int Part1(IEnumerable<string> inputLines)
         {
-            var safeReportsPart1 = 0;
-            var safeReportsPart2 = 0;
-            
-            Input.LoadLines().ForEach(line =>
+            var safeReports = 0;
+            foreach (var line in inputLines)
             {
                 var levels = line.Split(' ').Select(l => int.Parse(l)).ToList();
-                
                 if (IsSafe(levels))
                 {
-                    safeReportsPart1++;
+                    safeReports++;
                 }
+            }
 
+            return safeReports;
+        }
+
+        public int Part2(IEnumerable<string> inputLines)
+        {
+            var safeReports = 0;
+            foreach (var line in inputLines)
+            {
+                var levels = line.Split(' ').Select(l => int.Parse(l)).ToList();
                 for (var i = 0; i < levels.Count; i++)
                 {
                     var alteredLevels = levels.Where((level, index) => index != i).ToList();
                     if (IsSafe(alteredLevels))
                     {
-                        safeReportsPart2++;
-                        return;
+                        safeReports++;
+                        break;
                     }
                 }
+            }
 
-            });
+            return safeReports;
+        }
+    }
 
-            Output.Part1(safeReportsPart1);
-            Output.Part2(safeReportsPart2);
+    internal class Program
+    {
+        static void Main(string[] args)
+        {
+            AdventOfCodeRunner.Run<Day2_2024>(2, 4);
         }
     }
 }

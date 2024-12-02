@@ -2,10 +2,45 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 
 namespace AdventOfCode
 {
+    public class AdventOfCodeRunner
+    {
+        public static void Run<T>(int demo1Result, int? demo2Result = null)
+            where T : IDailyChallenge
+        {
+            var challenge = Activator.CreateInstance<T>();
+
+            Console.WriteLine($"------ DEMO -----");
+            Input.UseDemo();
+
+            var part1Demo = challenge.Part1(Input.LoadLines());
+            Output.Part1(part1Demo, demo1Result);
+
+            var part2Demo = challenge.Part2(Input.LoadLines());
+            Output.Part2(part2Demo, demo2Result);
+
+            Console.WriteLine();
+            Console.WriteLine($"--- CHALLENGE ---");
+
+            Input.UseDefault();
+            
+            var part1 = challenge.Part1(Input.LoadLines());
+            Output.Part1(part1);
+            
+            var part2 = challenge.Part2(Input.LoadLines());
+            Output.Part2(part2);
+        }
+    }
+
+    public interface IDailyChallenge
+    {
+        int Part1(IEnumerable<string> inputLines);
+
+        int Part2(IEnumerable<string> inputLines);
+    }
+
     public class Input
     {
         public static string FilePath { get; set; } = "input.txt";
