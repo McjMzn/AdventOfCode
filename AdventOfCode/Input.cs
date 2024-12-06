@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -7,30 +8,53 @@ namespace AdventOfCode
 {
     public class AdventOfCodeRunner
     {
-        public static void Run<T>(int demo1Result, int? demo2Result = null)
+        public static bool Verbose { get; set; }
+
+        public static void Run<T>(int demo1Result, int? demo2Result = null, bool runDemo = true, bool verbose = false)
             where T : IDailyChallenge
         {
+            Verbose = verbose;
+
             var challenge = Activator.CreateInstance<T>();
+            var sw = new Stopwatch();
+            if (runDemo)
+            {
+                Console.WriteLine($"------ DEMO -----");
+                Input.UseDemo();
 
-            Console.WriteLine($"------ DEMO -----");
-            Input.UseDemo();
+                sw.Restart();
+                var part1Demo = challenge.Part1(Input.LoadLines());
+                sw.Stop();
+                Output.Part1(part1Demo, sw.Elapsed, demo1Result);
 
-            var part1Demo = challenge.Part1(Input.LoadLines());
-            Output.Part1(part1Demo, demo1Result);
+                sw.Restart();
+                var part2Demo = challenge.Part2(Input.LoadLines());
+                sw.Stop();
+                Output.Part2(part2Demo, sw.Elapsed, demo2Result);
 
-            var part2Demo = challenge.Part2(Input.LoadLines());
-            Output.Part2(part2Demo, demo2Result);
+                Console.WriteLine();
+            }
 
-            Console.WriteLine();
             Console.WriteLine($"--- CHALLENGE ---");
 
             Input.UseDefault();
-            
+
+            sw.Restart();
             var part1 = challenge.Part1(Input.LoadLines());
-            Output.Part1(part1);
-            
+            sw.Stop();
+            Output.Part1(part1, sw.Elapsed);
+
+            sw.Restart();
             var part2 = challenge.Part2(Input.LoadLines());
-            Output.Part2(part2);
+            Output.Part2(part2, sw.Elapsed);
+        }
+
+        public static void WriteLine(params object[] toWrite)
+        {
+            if (Verbose)
+            {
+                Output.WriteLineInColor(toWrite);
+            }
         }
     }
 

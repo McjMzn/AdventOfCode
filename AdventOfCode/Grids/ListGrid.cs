@@ -13,9 +13,19 @@ namespace AdventOfCode.Grids
 
         public override IEnumerable<T> Nodes => this.nodes;
 
+        public List<T> NodesList => this.nodes;
+
         public void Add(T node)
         {
             this.nodes.Add(node);
+        }
+
+        public (int Y, int X) GetIndices(int index)
+        {
+            var y = index / Width;
+            var x = index % Width;
+
+            return (y, x);
         }
 
         public override T Get(int y, int x)
@@ -31,11 +41,8 @@ namespace AdventOfCode.Grids
         public override (int Y, int X) GetIndices(T node)
         {
             var index = this.nodes.IndexOf(node);
-
-            var y = index / Width;
-            var x = index % Width;
-
-            return (y, x);
+         
+            return GetIndices(index);
         }
 
         public override string ToString()

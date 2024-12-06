@@ -4,28 +4,38 @@ namespace AdventOfCode
 {
     public static class Output
     {
-        public static void Part1(int answer, int? expectedAnswer = null) => WritePrefixed(1, answer, expectedAnswer);
+        public static void Part1(int answer, TimeSpan elapsed, int? expectedAnswer = null) => WritePrefixed(1, answer, elapsed, expectedAnswer);
 
-        public static void Part2(int answer, int? expectedAnswer = null) => WritePrefixed(2, answer, expectedAnswer);
+        public static void Part2(int answer, TimeSpan elapsed, int? expectedAnswer = null) => WritePrefixed(2, answer, elapsed, expectedAnswer);
 
-        private static void WritePrefixed(int partNumber, int answer, int? expectedAnswer = null)
+        private static void WritePrefixed(int partNumber, int answer, TimeSpan elapsed, int? expectedAnswer = null)
         {
             if (expectedAnswer is null)
             {
-                WriteInColor(ConsoleColor.Gray, $"Part {partNumber}: ", ConsoleColor.White, answer, ConsoleColor.DarkYellow, $" {new string('*', partNumber)}");
+                WriteLineInColor(
+                    ConsoleColor.Gray, $"Part {partNumber}: ",
+                    ConsoleColor.White, answer,
+                    ConsoleColor.DarkCyan, $" ({elapsed.ToString(@"ss\.fff")}s)",
+                    ConsoleColor.DarkYellow, expectedAnswer is not null ? $" {new string('*', partNumber)}" : string.Empty
+                );
                 return;
             }
 
             if (expectedAnswer is not null && answer == expectedAnswer)
             {
-                WriteInColor(ConsoleColor.Gray, $"Part {partNumber}: ", ConsoleColor.Green, answer, ConsoleColor.DarkYellow, $" {new string('*', partNumber)}");
+                WriteLineInColor(
+                    ConsoleColor.Gray, $"Part {partNumber}: ",
+                    ConsoleColor.Green, answer,
+                    ConsoleColor.DarkCyan, $" ({elapsed.ToString(@"ss\.fff")}s)",
+                    ConsoleColor.DarkYellow, expectedAnswer is not null ? $" {new string('*', partNumber)}" : string.Empty
+                );
                 return;
             }
 
-            WriteInColor(ConsoleColor.Gray, $"Part {partNumber}: ", ConsoleColor.Red, answer, ConsoleColor.DarkRed, $" (expected {expectedAnswer})");
+            WriteLineInColor(ConsoleColor.Gray, $"Part {partNumber}: ", ConsoleColor.Red, answer, ConsoleColor.DarkRed, $" (expected {expectedAnswer})");
         }
 
-        private static void WriteInColor(params object[] toWrite)
+        public static void WriteLineInColor(params object[] toWrite)
         {
             foreach (var x in toWrite)
             {
