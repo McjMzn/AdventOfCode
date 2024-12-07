@@ -10,12 +10,16 @@ namespace AdventOfCode
     {
         public static bool Verbose { get; set; }
 
-        public static void Run<T>(int demo1Result, int? demo2Result = null, bool runDemo = true, bool verbose = false)
+        public static void Run<T>(object demo1Result, object demo2Result = null, bool runDemo = true, bool verbose = false)
             where T : IDailyChallenge
         {
             Verbose = verbose;
 
             var challenge = Activator.CreateInstance<T>();
+
+            var part1Method = typeof(T).GetMethod(nameof(IDailyChallenge<T>.Part1));
+            var part2Method = typeof(T).GetMethod(nameof(IDailyChallenge<T>.Part2));
+
             var sw = new Stopwatch();
             if (runDemo)
             {
@@ -23,12 +27,12 @@ namespace AdventOfCode
                 Input.UseDemo();
 
                 sw.Restart();
-                var part1Demo = challenge.Part1(Input.LoadLines());
+                var part1Demo = part1Method.Invoke(challenge, [Input.LoadLines()]);
                 sw.Stop();
                 Output.Part1(part1Demo, sw.Elapsed, demo1Result);
 
                 sw.Restart();
-                var part2Demo = challenge.Part2(Input.LoadLines());
+                var part2Demo = part2Method.Invoke(challenge, [Input.LoadLines()]);
                 sw.Stop();
                 Output.Part2(part2Demo, sw.Elapsed, demo2Result);
 
@@ -40,12 +44,12 @@ namespace AdventOfCode
             Input.UseDefault();
 
             sw.Restart();
-            var part1 = challenge.Part1(Input.LoadLines());
+            var part1 = part1Method.Invoke(challenge, [Input.LoadLines()]);
             sw.Stop();
             Output.Part1(part1, sw.Elapsed);
 
             sw.Restart();
-            var part2 = challenge.Part2(Input.LoadLines());
+            var part2 = part2Method.Invoke(challenge, [Input.LoadLines()]);
             Output.Part2(part2, sw.Elapsed);
         }
 
@@ -60,9 +64,13 @@ namespace AdventOfCode
 
     public interface IDailyChallenge
     {
-        int Part1(IEnumerable<string> inputLines);
+    }
 
-        int Part2(IEnumerable<string> inputLines);
+    public interface IDailyChallenge<T> : IDailyChallenge
+    {
+        T Part1(IEnumerable<string> inputLines);
+
+        T Part2(IEnumerable<string> inputLines);
     }
 
     public class Input

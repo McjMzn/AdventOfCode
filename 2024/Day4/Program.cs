@@ -3,7 +3,7 @@ using AdventOfCode.Grids;
 
 namespace Day4
 {
-    internal class Day4_2024 : IDailyChallenge
+    internal class Day4_2024 : IDailyChallenge<int>
     {
         public int Part1(IEnumerable<string> inputLines)
         {

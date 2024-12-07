@@ -4,11 +4,11 @@ namespace AdventOfCode
 {
     public static class Output
     {
-        public static void Part1(int answer, TimeSpan elapsed, int? expectedAnswer = null) => WritePrefixed(1, answer, elapsed, expectedAnswer);
+        public static void Part1(object answer, TimeSpan elapsed, object? expectedAnswer = null) => WritePrefixed(1, answer, elapsed, expectedAnswer);
 
-        public static void Part2(int answer, TimeSpan elapsed, int? expectedAnswer = null) => WritePrefixed(2, answer, elapsed, expectedAnswer);
+        public static void Part2(object answer, TimeSpan elapsed, object? expectedAnswer = null) => WritePrefixed(2, answer, elapsed, expectedAnswer);
 
-        private static void WritePrefixed(int partNumber, int answer, TimeSpan elapsed, int? expectedAnswer = null)
+        private static void WritePrefixed(int partNumber, object answer, TimeSpan elapsed, object? expectedAnswer = null)
         {
             if (expectedAnswer is null)
             {
@@ -21,7 +21,7 @@ namespace AdventOfCode
                 return;
             }
 
-            if (expectedAnswer is not null && answer == expectedAnswer)
+            if (expectedAnswer is not null && answer.Equals(expectedAnswer))
             {
                 WriteLineInColor(
                     ConsoleColor.Gray, $"Part {partNumber}: ",

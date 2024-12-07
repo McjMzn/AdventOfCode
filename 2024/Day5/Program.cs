@@ -3,7 +3,7 @@ using System.Text.Json;
 
 namespace Day5
 {
-    internal class Day5_2024 : IDailyChallenge
+    internal class Day5_2024 : IDailyChallenge<int>
     {
         private List<List<int>> _incorrectUpdates = new List<List<int>>();
 

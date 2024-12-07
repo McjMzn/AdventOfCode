@@ -6,8 +6,6 @@ namespace Day1
     {
         static void Main(string[] args)
         {
-            // Input.UseDemo();
-
             var leftColumn = new List<int>();
             var rightColumn = new List<int>();
 
@@ -30,7 +28,7 @@ namespace Day1
 
             var distancesSum = leftColumn.Zip(rightColumn).Select(x => Math.Abs(x.First - x.Second)).Sum();
 
-            Output.Part1(distancesSum);
+            Output.Part1(distancesSum, TimeSpan.Zero);
         }
 
         static void Part2(List<int> leftColumn, List<int> rightColumn)
@@ -41,7 +39,7 @@ namespace Day1
                 similarity += leftItem * rightColumn.Count(x => x == leftItem);
             }
 
-            Output.Part2(similarity);
+            Output.Part2(similarity, TimeSpan.Zero);
         }
     }
 }

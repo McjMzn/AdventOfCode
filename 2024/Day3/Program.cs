@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Day3
 {
-    internal class Day3_2024 : IDailyChallenge
+    internal class Day3_2024 : IDailyChallenge<int>
     {
         public int Part1(IEnumerable<string> inputLines)
         {

@@ -2,7 +2,7 @@
 
 namespace Day2
 {
-    internal class Day2_2024 : IDailyChallenge
+    internal class Day2_2024 : IDailyChallenge<int>
     {
         static bool IsSafe(List<int> levels)
         {
