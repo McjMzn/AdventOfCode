@@ -15,7 +15,7 @@ namespace AdventOfCode
                 WriteLineInColor(
                     ConsoleColor.Gray, $"Part {partNumber}: ",
                     ConsoleColor.White, answer,
-                    ConsoleColor.DarkCyan, $" ({elapsed.ToString(@"ss\.fff")}s)",
+                    ConsoleColor.DarkCyan, $" ({elapsed.ToString(@"ss\.ffff")}s)",
                     ConsoleColor.DarkYellow, expectedAnswer is not null ? $" {new string('*', partNumber)}" : string.Empty
                 );
                 return;
@@ -26,7 +26,7 @@ namespace AdventOfCode
                 WriteLineInColor(
                     ConsoleColor.Gray, $"Part {partNumber}: ",
                     ConsoleColor.Green, answer,
-                    ConsoleColor.DarkCyan, $" ({elapsed.ToString(@"ss\.fff")}s)",
+                    ConsoleColor.DarkCyan, $" ({elapsed.ToString(@"ss\.ffff")}s)",
                     ConsoleColor.DarkYellow, expectedAnswer is not null ? $" {new string('*', partNumber)}" : string.Empty
                 );
                 return;

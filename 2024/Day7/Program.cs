@@ -23,30 +23,29 @@ namespace Day7
 
                 var values = split[1].Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(long.Parse).ToList();
 
-                AdventOfCodeRunner.Verbose = false;
-
-                checked
+                if (Test(expectedResult, values[0], values, 1, ['+', '*']))
                 {
-                    if (Test(expectedResult, values[0], values, 1, string.Empty))
-                    {
-                        Console.WriteLine($"{expectedResult} ~ [{string.Join(", ", values)}]");
-                        result += expectedResult;
-                    }
+                    result += expectedResult;
                 }
             }
 
-            Console.WriteLine();
             return result;
         }
 
-        private bool Test(long expectedResult, long currentResult, List<long> numbers, int index, string usedOperators)
+        private bool Test(long expectedResult, long currentResult, List<long> numbers, int index, char[] operations)
         {
-            return
-                Test(expectedResult, currentResult, numbers, index, '+', usedOperators) ||
-                Test(expectedResult, currentResult, numbers, index, '*', usedOperators);
+            foreach (var operation in operations)
+            {
+                if (Test(expectedResult, currentResult, numbers, index, operation, operations))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
-        private bool Test(long expectedResult, long currentResult, List<long> numebrs, int index, char mathOperation, string usedOperators)
+        private bool Test(long expectedResult, long currentResult, List<long> numebrs, int index, char mathOperation, char[] operations)
         {
             var newResult = mathOperation switch
             {
@@ -55,18 +54,20 @@ namespace Day7
                 '|' => long.Parse($"{currentResult}{numebrs[index]}"),
             };
 
+            if (newResult > expectedResult)
+            {
+                return false;
+            }
 
             AdventOfCodeRunner.WriteLine(new string(' ', 2 * index), $"{currentResult} {mathOperation} {numebrs[index]} = {newResult}");
             if (index + 1 < numebrs.Count)
             {
-                return Test(expectedResult, newResult, numebrs, index + 1, usedOperators + mathOperation);
+                return Test(expectedResult, newResult, numebrs, index + 1, operations);
             }
-
 
             var success = newResult == expectedResult;
             if (success)
             {
-                Console.Write($"{usedOperators} ~ ");
                 AdventOfCodeRunner.WriteLine(new string(' ', 2 * index), ConsoleColor.Green, success);
             }
             else
@@ -79,7 +80,26 @@ namespace Day7
 
         public long Part2(IEnumerable<string> inputLines)
         {
-            return 0;
+            long result = 0;
+            foreach (var line in inputLines)
+            {
+                var split = line.Split(':');
+                var expectedResult = long.Parse(split[0]);
+
+                var values = split[1].Split(" ", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).Select(long.Parse).ToList();
+
+                AdventOfCodeRunner.Verbose = false;
+
+                checked
+                {
+                    if (Test(expectedResult, values[0], values, 1, ['+', '*', '|']))
+                    {
+                        result += expectedResult;
+                    }
+                }
+            }
+
+            return result;
         }
     }
 }

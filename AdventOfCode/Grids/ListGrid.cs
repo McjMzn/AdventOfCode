@@ -15,9 +15,11 @@ namespace AdventOfCode.Grids
 
         public List<T> NodesList => this.nodes;
 
-        public void Add(T node)
+        public (int Y, int X) Add(T node)
         {
             this.nodes.Add(node);
+
+            return GetIndices(nodes.Count - 1);
         }
 
         public (int Y, int X) GetIndices(int index)
