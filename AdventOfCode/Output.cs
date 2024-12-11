@@ -21,7 +21,7 @@ namespace AdventOfCode
                 return;
             }
 
-            if (expectedAnswer is not null && answer.Equals(expectedAnswer))
+            if (expectedAnswer is not null && (answer.Equals(expectedAnswer) || answer.ToString() == expectedAnswer.ToString()))
             {
                 WriteLineInColor(
                     ConsoleColor.Gray, $"Part {partNumber}: ",
