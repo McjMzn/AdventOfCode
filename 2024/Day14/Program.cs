@@ -73,10 +73,14 @@ namespace Day14
             using var consoleWriter = new StreamWriter(consoleStream);
             using var fileWriter = File.AppendText("log.txt");
 
-
             for (var i = 1; i <= 10000; i++)
             {
                 robots.ForEach(r => r.Update(width, height));
+                
+                // Logged the board to a file.
+                // Noticed a pattern happening every 103 iterations (i.e. 509, 612, 715....)
+                // Checked only those steps.
+                // Found a christmas tree at 6587.
                 if (!AdventOfCodeRunner.RunningDemo && i == 6587)
                 {
                     Print(robots, width, height, consoleWriter);
