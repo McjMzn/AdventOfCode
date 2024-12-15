@@ -86,6 +86,17 @@ namespace Day14
                     Print(robots, width, height, consoleWriter);
                     return i;
                 }
+
+                // There's also a theoretical solution.
+                //
+                // Xs loop over 101 iterations.
+                // Ys loop over 103 iterations.
+                // 
+                // Let's find the highest condensation of Xs (tx) and Ys (ty).
+                //
+                // Use chinese remainder theorem to solve:
+                // t === tx (mod 101)
+                // t === ty (mod 103)
             }
 
             return 0;
