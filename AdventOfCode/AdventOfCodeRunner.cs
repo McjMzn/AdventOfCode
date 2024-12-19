@@ -28,8 +28,8 @@ namespace AdventOfCode
 
             var challenge = Activator.CreateInstance<T>();
 
-            var part1Method = typeof(T).GetMethod(nameof(IDailyChallenge<T>.Part1));
-            var part2Method = typeof(T).GetMethod(nameof(IDailyChallenge<T>.Part2));
+            var part1Method = typeof(T).GetMethod(nameof(IDailyChallenge<object>.Part1));
+            var part2Method = typeof(T).GetMethod(nameof(IDailyChallenge<object>.Part2));
 
             var sw = new Stopwatch();
             if (runDemo)
