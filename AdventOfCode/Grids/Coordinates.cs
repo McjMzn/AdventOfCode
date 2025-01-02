@@ -1,4 +1,6 @@
-﻿namespace AdventOfCode.Grids
+﻿using System;
+
+namespace AdventOfCode.Grids
 {
     public record Coordinates
     {
@@ -15,6 +17,16 @@
         public override string ToString()
         {
             return $"({this.Y}, {this.X})";
+        }
+
+        public double Distance(Coordinates other)
+        {
+            return Math.Sqrt(Math.Pow(X - other.X, 2) + Math.Pow(Y - other.Y, 2));
+        }
+
+        public Vector2d VectorTo (Coordinates other)
+        {
+            return (other.Y - Y, other.X - X);
         }
 
         public Coordinates Translated(Vector2d vector)

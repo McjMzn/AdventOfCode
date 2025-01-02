@@ -1,6 +1,6 @@
 ﻿namespace AdventOfCode.Pathfinding
 {
-    internal interface IReachable
+    public interface IReachable
     {
         long Distance { get; set; }
 

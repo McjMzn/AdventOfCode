@@ -1,5 +1,6 @@
 ﻿using AdventOfCode;
 using AdventOfCode.Grids;
+using AdventOfCode.Pathfinding;
 
 namespace Day18
 {
@@ -36,7 +37,7 @@ namespace Day18
             var map = ProcessInput(inputLines, mapHeight, mapWidth, bytesToSimulate);
             map[(0, 0)].Distance = 0;
 
-            DijkstraSolver.SolveReachable(map, node => !node.IsCorrupted);
+            Dijkstra.SolveReachable(map, node => !node.IsCorrupted);
 
             return map[(mapHeight - 1, mapWidth - 1)].Distance.ToString();
         }
@@ -56,7 +57,7 @@ namespace Day18
                 var map = ProcessInput(lines, mapHeight, mapWidth, stepNumber + 1);
                 map[(0,0)].Distance = 0;
 
-                DijkstraSolver.SolveReachable(map, n => !n.IsCorrupted);
+                Dijkstra.SolveReachable(map, n => !n.IsCorrupted);
 
                 if (map[(mapHeight - 1, mapWidth - 1)].Distance == int.MaxValue)
                 {

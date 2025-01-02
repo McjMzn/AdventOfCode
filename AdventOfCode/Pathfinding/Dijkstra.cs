@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace AdventOfCode.Pathfinding
 {
-    internal class Dijkstra
+    public class Dijkstra
     {
         public static void Solve<T>(IDictionary<Coordinates, T> map)
             where T : IReachable
