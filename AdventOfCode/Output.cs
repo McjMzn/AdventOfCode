@@ -35,7 +35,8 @@ namespace AdventOfCode
             WriteLineInColor(ConsoleColor.Gray, $"Part {partNumber}: ", ConsoleColor.Red, answer, ConsoleColor.DarkRed, $" (expected {expectedAnswer})");
         }
 
-        public static void WriteLineInColor(params object[] toWrite)
+
+        public static void WriteInColor(params object[] toWrite)
         {
             foreach (var x in toWrite)
             {
@@ -52,6 +53,11 @@ namespace AdventOfCode
             }
 
             Console.ResetColor();
+        }
+
+        public static void WriteLineInColor(params object[] toWrite)
+        {
+            WriteInColor(toWrite);
             Console.WriteLine();
         }
     }

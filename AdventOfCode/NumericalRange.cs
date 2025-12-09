@@ -3,9 +3,13 @@ using System.Collections.Generic;
 
 namespace AdventOfCode
 {
-    public record NumericalRange(long Start, long End)
+    public record NumericalRange(long start, long end)
     {
-        public long Length { get; } = End - Start + 1;
+        public long Start { get; set; } = start;
+        
+        public long End { get; set; } = end;
+
+        public long Length => End - Start + 1;
 
 
         public bool Contains(long number)

@@ -67,6 +67,15 @@ namespace AdventOfCode
             Output.Part2(part2, sw.Elapsed);
         }
 
+
+        public static void Write(params object[] toWrite)
+        {
+            if (Verbose)
+            {
+                Output.WriteInColor(toWrite);
+            }
+        }
+
         public static void WriteLine(params object[] toWrite)
         {
             if (Verbose)
