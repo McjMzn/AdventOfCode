@@ -6,16 +6,7 @@ namespace Day9
     {
         public long Part1(IEnumerable<string> inputLines)
         {
-            var coordinates = new List<(long Y, long X)>();
-            foreach (var line in inputLines)
-            {
-                var split = line.Split(',');
-                var x = long.Parse(split[0]);
-                var y = long.Parse(split[1]);
-
-                coordinates.Add((y, x));
-            }
-
+            var coordinates = LoadRedTiles(inputLines);
             var areas = new List<long>();
             foreach (var a in coordinates)
             {
@@ -40,7 +31,47 @@ namespace Day9
 
         public long Part2(IEnumerable<string> inputLines)
         {
+            var redTiles = LoadRedTiles(inputLines);
+            var greenTiles = LoadGreenTiles(redTiles);
+
             return 0L;
+        }
+
+        private List<(long Y, long X)> LoadRedTiles(IEnumerable<string> inputLines)
+        {
+            var coordinates = new List<(long Y, long X)>();
+            foreach (var line in inputLines)
+            {
+                var split = line.Split(',');
+                var x = long.Parse(split[0]);
+                var y = long.Parse(split[1]);
+
+                coordinates.Add((y, x));
+            }
+
+            return coordinates;
+        }
+
+        private List<(long Y, long X)> LoadGreenTiles(List<(long Y, long X)> redTiles)
+        {
+            List<(long Y, long X)> greenTiles = new();
+
+            for (var i = 0; i < redTiles.Count; i++)
+            {
+                var from = redTiles[i];
+                var to = redTiles[(i + 1) % redTiles.Count];
+
+                var steps = Math.Max(Math.Abs(to.Y - from.Y), Math.Abs(to.X - from.X));
+                var vector = (Y: Math.Sign(to.Y - from.Y), X: Math.Sign(to.X - from.X));
+
+                for (var s = 1; s < steps; s++)
+                {
+                    var tile = (from.Y + s * vector.Y, from.X + s * vector.X);
+                    greenTiles.Add(tile);
+                }
+            }
+
+            return greenTiles;
         }
     }
 
