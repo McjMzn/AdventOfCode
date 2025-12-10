@@ -3,7 +3,7 @@ using AdventOfCode.Grids;
 
 namespace Day7
 {
-    internal class Node
+    internal class Node : IHaveCoordinates
     {
         public Node(char symbol)
         {
@@ -18,6 +18,8 @@ namespace Day7
         public bool IsSplitter => Symbol == '^';
 
         public bool IsStart => Symbol == 'S';
+
+        public Coordinates Coordinates { get; set; }
 
         public override string ToString()
         {
@@ -49,11 +51,52 @@ namespace Day7
 
         public long Part2(IEnumerable<string> inputLines)
         {
-            var result = 0L;
+            var grid = LoadGrid(inputLines);
+            var start = grid.Nodes.First(n => n.IsStart);
 
-            return result;
+            return CountPaths(grid, start);
         }
 
+        
+        private Dictionary<Node, long> _cache = new();
+
+        private long CountPaths(Grid<Node> grid, Node current)
+        {
+            if (_cache.ContainsKey(current))
+            {
+                return _cache[current];
+            }
+
+            var next = grid.Get(current.Coordinates.Y + 1, current.Coordinates.X);
+
+            switch (next)
+            {
+                case null:
+                    _cache[current] = 1;
+                    return _cache[current];
+
+                case { IsSplitter: true }:
+                    _cache[current] = 0;
+                    var left = grid.Get(next.Coordinates.Y, next.Coordinates.X - 1);
+                    if (left is not null)
+                    {
+                        _cache[current] += CountPaths(grid, left);
+                    }
+
+                    var right = grid.Get(next.Coordinates.Y, next.Coordinates.X + 1);
+                    if (right is not null)
+                    {
+                        _cache[current] += CountPaths(grid, right);
+                    }
+
+                    return _cache[current];
+
+                default:
+                    _cache[current] = CountPaths(grid, next);
+                    return _cache[current];
+            }
+        }
+        
         private int UpdateGrid(Grid<Node> grid)
         {
             var start = grid.Nodes.First(n => n.IsStart);

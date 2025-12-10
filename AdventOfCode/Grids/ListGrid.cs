@@ -18,8 +18,14 @@ namespace AdventOfCode.Grids
         public (int Y, int X) Add(T node)
         {
             this.nodes.Add(node);
+            var indices = GetIndices(nodes.Count - 1);
 
-            return GetIndices(nodes.Count - 1);
+            if (node is IHaveCoordinates coordinatedNode)
+            {
+                coordinatedNode.Coordinates = indices;
+            }
+
+            return indices;
         }
 
         public (int Y, int X) GetIndices(int index)
